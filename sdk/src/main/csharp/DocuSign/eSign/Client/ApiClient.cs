@@ -29,6 +29,20 @@ namespace DocuSign.eSign.Client
 
             RestClient = new RestClient(basePath);
         }
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ApiClient" /> class.
+        /// </summary>
+        /// <param name="useDefaultCredentials">Whether or not to send the default credentials will be send along to the server.</param>
+        /// <param name="basePath">The base path.</param>
+        public ApiClient(bool useDefaultCredentials, String basePath="https://www.docusign.net/restapi")
+        {
+           if (String.IsNullOrEmpty(basePath))
+                throw new ArgumentException("basePath cannot be empty");
+
+            RestClient = new RestClient(basePath);
+            UseDefaultCredentials = useDefaultCredentials;
+        }
 
         /// <summary>
         /// Gets or sets the default API client for making HTTP calls.
@@ -49,7 +63,8 @@ namespace DocuSign.eSign.Client
             Dictionary<String, FileParameter> fileParams, Dictionary<String, String> pathParams)
         {
             var request = new RestRequest(path, method);
-   
+            
+            request.UseDefaultCredentials = UseDefaultCredentials;
             // add path parameter, if any
             foreach(var param in pathParams)
                 request.AddParameter(param.Key, param.Value, ParameterType.UrlSegment); 
@@ -125,6 +140,8 @@ namespace DocuSign.eSign.Client
             return (Object)response;
         }
     
+        public bool UseDefaultCredentials {get; set; } 
+        
         /// <summary>
         /// Escape string (url-encoded).
         /// </summary>
